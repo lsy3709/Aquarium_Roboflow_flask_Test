@@ -17,52 +17,53 @@
     </style>
 </head>
 <body>
-    <h1>Upload File</h1>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" name="file" id="fileInput" required>
-        <button type="submit">Upload</button>
-    </form>
-    <div id="loading">Processing your file... Please wait!</div>
-    <div id="result"></div>
+<h1>Upload File</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" required>
+    <button type="submit">Upload</button>
+</form>
+<div id="loading">Processing your file... Please wait!</div>
+<div id="result"></div>
 
-    <script>
-        const form = document.getElementById('uploadForm');
-        const loading = document.getElementById('loading');
-        const result = document.getElementById('result');
-        const socket = io();
+<script>
+    const form = document.getElementById('uploadForm');
+    const loading = document.getElementById('loading');
+    const result = document.getElementById('result');
+    const socket = io();
 
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const fileInput = document.getElementById('fileInput');
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const fileInput = document.getElementById('fileInput');
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
 
-            loading.style.display = 'block';
-            result.innerHTML = '';
+        loading.style.display = 'block';
+        result.innerHTML = '';
 
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData,
-            });
-
-            const data = await response.json();
-            if (data.error) {
-                alert(data.error);
-                loading.style.display = 'none';
-            }
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData,
         });
 
-        socket.on('file_processed', (data) => {
+        const data = await response.json();
+        if (data.error) {
+            alert(data.error);
             loading.style.display = 'none';
-            result.innerHTML = `
-                <h2>Processed File</h2>
-                ${
-                    data.url.endsWith('.mp4')
-                        ? `<video controls width="640"><source src="${data.url}" type="video/mp4">Your browser does not support the video tag.</video>`
-                        : `<img src="${data.url}" alt="Processed Image" style="max-width: 100%; height: auto;">`
-                }
-            `;
-        });
-    </script>
+        }
+    });
+
+    socket.on('file_processed', (data) => {
+        loading.style.display = 'none';
+        result.innerHTML = `
+            <h2>Processed File</h2>
+            ${
+                data.url.endsWith('.mp4')
+                        ? `<video controls  autoplay style="max-width: 100%; height: auto;"><source src="${data.url}" type="video/mp4">Your browser does not support the video tag.</video>`
+<!--? `<a href="${data.url}" download>Download Video</a>`-->
+                    : `<img src="${data.url}" alt="Processed Image" style="max-width: 100%; height: auto;">`
+            }
+        `;
+    });
+</script>
 </body>
 </html>
