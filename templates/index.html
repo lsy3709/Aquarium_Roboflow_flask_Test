@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!--    <meta> 태그: 웹 페이지의 문자 인코딩과 뷰포트 설정; 반응형 웹과 올바른 문자 표시를 위해 사용.-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Upload</title>
+    <!--    <script> 태그: Socket.IO 라이브러리 로드; 실시간 양방향 통신을 지원하기 위해 사용.-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.min.js"></script>
+<!--    <style> 태그: 로딩 메시지와 결과 영역 스타일 정의; 사용자 인터페이스 개선 목적.-->
     <style>
         #loading {
             display: none;
@@ -26,32 +29,42 @@
 <div id="result"></div>
 
 <script>
+<!--    기본 DOM 요소 가져오기-->
     const form = document.getElementById('uploadForm');
     const loading = document.getElementById('loading');
     const result = document.getElementById('result');
+<!--    socket: Socket.IO 클라이언트 초기화; 서버와 실시간 통신을 위해 사용.-->
     const socket = io();
 
     form.addEventListener('submit', async (event) => {
+<!--    기본 폼 제출 동작을 막아 비동기 요청으로 처리.-->
         event.preventDefault();
+<!--        파일 선택 입력 필드에서 사용자가 선택한 파일을 가져옴.-->
         const fileInput = document.getElementById('fileInput');
+<!--        FormData 객체: 파일 데이터를 서버로 전송하기 위한 HTTP 요청 본문 생성.-->
         const formData = new FormData();
+<!--        파일 데이터를 file이라는 이름으로 추가.-->
         formData.append('file', fileInput.files[0]);
-
+<!--로딩 메시지 표시.-->
         loading.style.display = 'block';
+<!--        이전 결과를 초기화.-->
         result.innerHTML = '';
 
+<!--fetch 함수: 파일 업로드를 서버로 전송; 비동기 HTTP 요청을 처리.-->
         const response = await fetch('/upload', {
             method: 'POST',
+<!--            파일 데이터를 요청 본문에 포함-->
             body: formData,
         });
-
+<!--서버로부터의 응답 데이터를 JSON으로 변환하고 에러 여부 확인 -->
         const data = await response.json();
         if (data.error) {
             alert(data.error);
             loading.style.display = 'none';
         }
     });
-
+<!--실시간 파일 처리 완료 이벤트-->
+<!--서버가 file_processed 이벤트를 전송하면 실행.-->
     socket.on('file_processed', (data) => {
         loading.style.display = 'none';
         result.innerHTML = `
