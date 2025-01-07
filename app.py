@@ -9,7 +9,7 @@ import threading
 import cv2
 # ultralytics: 간단히 YOLO 모델을 로드하고 사용
 from ultralytics import YOLO # 실시간 객체 탐지 모델로, 이미지 또는 비디오에서 빠르고 정확하게 객체를 탐지
-from flask import Response, request, send_file, abort
+from flask import  request, send_file
 
 # Flask와 SocketIO 초기화
 # 현재 모듈의 이름을 나타냅니다. Flask는 이를 사용해 애플리케이션의 경로를 설정, 애플리케이션의 라우트, 설정, 확장 등을 관리

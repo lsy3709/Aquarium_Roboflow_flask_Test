@@ -59,7 +59,7 @@
             ${
                 data.url.endsWith('.mp4')
 ? `<a href="${data.url}" download>Download Video</a>`
-                    : `<img src="${data.url}" alt="Processed Image" style="max-width: 100%; height: auto;">`
+                    : `<div><a href="${data.url}" download>Download Image</a></div><img src="${data.url}" alt="Processed Image" style="max-width: 100%; height: auto;">`
             }
         `;
     });
